@@ -33,7 +33,6 @@ namespace BTVNBuoi3
                 item.SubItems.Add(txtPhone.Text);
                 listView1.Items.Add(item);
 
-                // Clear TextBoxes
                 txtLastName.Clear();
                 txtFirstName.Clear();
                 txtPhone.Clear();
@@ -54,9 +53,9 @@ namespace BTVNBuoi3
             if (listView1.SelectedItems.Count > 0)
             {
                 ListViewItem selectedItem = listView1.SelectedItems[0];
-                selectedItem.Text = txtLastName.Text; // Cập nhật cột đầu tiên
-                selectedItem.SubItems[1].Text = txtFirstName.Text; // Cập nhật cột thứ hai
-                selectedItem.SubItems[2].Text = txtPhone.Text; // Cập nhật cột thứ ba
+                selectedItem.Text = txtLastName.Text;
+                selectedItem.SubItems[1].Text = txtFirstName.Text;
+                selectedItem.SubItems[2].Text = txtPhone.Text;
             }
             else
             {
