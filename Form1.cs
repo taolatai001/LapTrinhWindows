@@ -1,83 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BTVNBuoi3
+namespace EmployeeApp
 {
     public partial class Form1 : Form
     {
+        private List<NhanVien> employees = new List<NhanVien>();
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void Form1_Load(object sender, EventArgs e)
+      {
+          employees.Add(new NhanVien { MSNV = "NV001", TenNhanVien = "Nguyễn Văn A", LuongCanBan = 8500000 });
+          employees.Add(new NhanVien { MSNV = "NV002", TenNhanVien = "Trần Thị B", LuongCanBan = 9500000 });
+          LoadDataToGrid();
+      }
 
+        private void LoadDataToGrid()
+        {
+            dataGridView1.DataSource = null; 
+            dataGridView1.DataSource = employees; 
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(txtLastName.Text) &&
-            !string.IsNullOrWhiteSpace(txtFirstName.Text) &&
-            !string.IsNullOrWhiteSpace(txtPhone.Text))
+            using (var formNhanVien = new NhanVienForm())
             {
-                ListViewItem item = new ListViewItem(txtLastName.Text);
-                item.SubItems.Add(txtFirstName.Text);
-                item.SubItems.Add(txtPhone.Text);
-                listView1.Items.Add(item);
-
-                // Clear TextBoxes
-                txtLastName.Clear();
-                txtFirstName.Clear();
-                txtPhone.Clear();
-            }
-            else
-            {
-                MessageBox.Show("Điền còn thiếu");
+                if (formNhanVien.ShowDialog() == DialogResult.OK)
+                {
+                    employees.Add(formNhanVien.NhanVien);
+                    LoadDataToGrid();
+                }
             }
         }
 
-        private void listView1_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnEdit_Click(object sender, EventArgs e)
-        {
-            if (listView1.SelectedItems.Count > 0)
-            {
-                ListViewItem selectedItem = listView1.SelectedItems[0];
-                selectedItem.Text = txtLastName.Text; 
-                selectedItem.SubItems[1].Text = txtFirstName.Text; 
-                selectedItem.SubItems[2].Text = txtPhone.Text; 
-            }
-            else
-            {
-                MessageBox.Show("Chọn dòng để chỉnh sửa.");
-            }
-        }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (listView1.SelectedItems.Count > 0)
+            if (dataGridView1.SelectedRows.Count > 0)
             {
-                listView1.Items.Remove(listView1.SelectedItems[0]);
+                int index = dataGridView1.SelectedRows[0].Index;
+                employees.RemoveAt(index);
+                LoadDataToGrid();
             }
             else
             {
-                MessageBox.Show("Chọn dòng để xóa.");
+                MessageBox.Show("Vui lòng chọn một nhân viên để xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            employees.Add(new NhanVien { MSNV = "NV001", TenNhanVien = "Nguyễn Văn A", LuongCanBan = 8500000 });
+            employees.Add(new NhanVien { MSNV = "NV002", TenNhanVien = "Trần Thị B", LuongCanBan = 9500000 });
+            LoadDataToGrid();
+        }
+
+        private void btnEdit_Click_1(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0)
+            {
+                int index = dataGridView1.SelectedRows[0].Index;
+                var selectedEmployee = employees[index];
+
+                using (var formNhanVien = new NhanVienForm(selectedEmployee))
+                {
+                    if (formNhanVien.ShowDialog() == DialogResult.OK)
+                    {
+                        employees[index] = formNhanVien.NhanVien; 
+                        LoadDataToGrid();
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng chọn một nhân viên để sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
-     
-
       
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+    }
+
+    public class NhanVien
+    {
+        public string MSNV { get; set; }
+        public string TenNhanVien { get; set; }
+        public decimal LuongCanBan { get; set; }
     }
 }
